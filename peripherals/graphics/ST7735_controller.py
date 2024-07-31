@@ -1,14 +1,8 @@
 import uasyncio
 from peripherals.peripheral import Peripheral
 from machine import SPI, Pin
-<<<<<<<< HEAD:peripherals/graphics/ST7735_controller.py
 from peripherals.graphics.ST7735_driver import TFT, TFTColor
 from peripherals.graphics.font import font
-========
-from hardware.peripherals.graphics.ST7735_driver import TFT, TFTColor
-from hardware.peripherals.graphics.font import font
-from hardware.peripheral import Peripheral
->>>>>>>> c0a2b5b63425ca81cf4d1bb99c311fa2d7bc4d5c:hardware/peripherals/graphics/ST7735_controller.py
 
 
 class ST7735_Controller(Peripheral):

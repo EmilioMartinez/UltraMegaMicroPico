@@ -1,11 +1,7 @@
 import uasyncio
 import math
 from machine import Pin, PWM
-<<<<<<<< HEAD:peripherals/audio/buzzer.py
 from peripherals.peripheral import Peripheral
-========
-from hardware.peripheral import Peripheral
->>>>>>>> c0a2b5b63425ca81cf4d1bb99c311fa2d7bc4d5c:hardware/peripherals/audio/buzzer.py
 
 
 MAX_DUTY = 32768

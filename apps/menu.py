@@ -1,11 +1,6 @@
 import uasyncio
-<<<<<<< HEAD
 import device
 from peripherals.audio.music import we_are_number_one
-=======
-from hardware.device import device
-from hardware.peripherals.audio.music import we_are_number_one
->>>>>>> c0a2b5b63425ca81cf4d1bb99c311fa2d7bc4d5c
 
 
 async def run():

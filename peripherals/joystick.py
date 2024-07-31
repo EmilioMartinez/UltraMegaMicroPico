@@ -1,9 +1,5 @@
 from peripherals.peripheral import Peripheral
 from machine import ADC, Pin
-<<<<<<<< HEAD:peripherals/joystick.py
-========
-from hardware.peripheral import Peripheral
->>>>>>>> c0a2b5b63425ca81cf4d1bb99c311fa2d7bc4d5c:hardware/peripherals/joystick.py
 
 
 class Joystick(Peripheral):
