@@ -1,4 +1,3 @@
-from device.graphics.ST7735 import TFT
 from device.graphics.graphics import Graphics
 from device.buzzer import Buzzer
 from device.joystick import Joystick
