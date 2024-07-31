@@ -20,6 +20,19 @@
 		],
 		"micropico.syncAllFileTypes": true,
 		"micropico.openOnStart": true,
-		"micropico.executeOnConnect": "connect.py"
+		"micropico.executeOnConnect": "connect.py",
+		"micropico.pyIgnore": [
+			"**/.picowgo",
+			"**/.micropico",
+			"**/.vscode",
+			"**/.gitignore",
+			"**/.git",
+			"**/.DS_Store",
+			"**/project.pico-go",
+			"**/env",
+			"**/venv",
+			"**/.venv",
+			"Pico workspace.code-workspace"
+		]
 	}
 }
