@@ -1,5 +1,4 @@
-from device.devices.green_block import *
-
+import hardware.device
 
 print("Boot complete")
 

@@ -1,4 +1,4 @@
-from notes import *
+from hardware.peripherals.audio.notes import *
 
 
 death_tune = [
