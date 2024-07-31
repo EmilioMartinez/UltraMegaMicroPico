@@ -11,8 +11,10 @@ try:
     uasyncio.run(main_loop)
 except KeyboardInterrupt:
     # Here go debug methods
-    # Here go termination methods
+    # Here go pre-termination methods
     main_loop.close()
+finally:
+    # Here go termination methods
     print("Main loop terminated")
     device.reset()
 
