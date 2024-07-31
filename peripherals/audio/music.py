@@ -1,6 +1,12 @@
 from peripherals.audio.notes import *
 
 
+startup_tune = [
+    (C4, hn),
+    (G4, qn),
+    (C5, hn)
+]
+
 death_tune = [
     (A3, fn + qn),
     (A3, fn),
