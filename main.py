@@ -1,5 +1,9 @@
 import uasyncio
+<<<<<<< HEAD
 import device
+=======
+from hardware.device import device
+>>>>>>> c0a2b5b63425ca81cf4d1bb99c311fa2d7bc4d5c
 import apps.menu
 
 async def main():
