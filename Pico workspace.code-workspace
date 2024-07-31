@@ -20,7 +20,7 @@
 		],
 		"micropico.syncAllFileTypes": true,
 		"micropico.openOnStart": true,
-		"micropico.executeOnConnect": "connect.py",
+		"micropico.executeOnConnect": "",
 		"micropico.pyIgnore": [
 			"**/.picowgo",
 			"**/.micropico",
