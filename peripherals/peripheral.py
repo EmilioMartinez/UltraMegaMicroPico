@@ -1,20 +1,18 @@
 
 
-_peripherals = []
-
+_list = []
 
 class Peripheral:
     def __init__(self):
         if type(self) is Peripheral:
             raise TypeError("Peripheral cannot be instantiated directly")
         
-        _peripherals.append(self)
+        _list.append(self)
     
     def reset(self):
         print(f"Peripheral reset:{self}")
 
-def reset():
-    print("Resetting device")
-    for p in _peripherals:
+def reset_all():
+    for p in _list:
         p.reset()
 
