@@ -1,6 +1,6 @@
-from machine import Pin, PWM # type: ignore
+from machine import Pin, PWM
 import math
-import uasyncio # type: ignore
+import uasyncio
 
 
 def midiNumber2Frec(m):

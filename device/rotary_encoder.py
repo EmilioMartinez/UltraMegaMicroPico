@@ -1,4 +1,4 @@
-# import uasyncio # type: ignore
+# import uasyncio
 # from rotary_encoder import RotaryEncoder
 
 # async def main():

@@ -1,5 +1,5 @@
-import uasyncio # type: ignore
-from machine import SPI, Pin # type: ignore
+import uasyncio
+from machine import SPI, Pin
 from device.graphics.ST7735 import TFT, TFTColor
 from device.graphics.sysfont import sysfont
 
