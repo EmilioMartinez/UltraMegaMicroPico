@@ -10,9 +10,16 @@ class Peripheral:
         _list.append(self)
     
     def reset(self):
-        print(f"Peripheral reset:{self}")
+        print(f"Peripheral reset: {self}")
+    
+    def debug(self):
+        print(f"Peripheral debug: {self}")
 
 def reset_all():
     for p in _list:
         p.reset()
+
+def debug_all():
+    for p in _list:
+        p.debug()
 
