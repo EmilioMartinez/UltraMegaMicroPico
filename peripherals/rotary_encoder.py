@@ -53,5 +53,5 @@ class RotaryEncoder:
         return self.counter
 
     def debug(self):
-        return (self.pin_clk.value(), self.pin_dt.value(), self.pin_sw.value())
+        print(self.pin_clk.value(), self.pin_dt.value(), self.pin_sw.value())
 

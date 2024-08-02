@@ -7,7 +7,7 @@ import utils.pin_debugger as pin_debugger
 coroutines = set()
 
 async def main():
-    coroutines.add(pin_debugger.start_auto_debug_task())
+    # coroutines.add(pin_debugger.start_auto_debug_task())
     await apps.menu.run()
 
 try:
