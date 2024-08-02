@@ -1,8 +1,10 @@
 import uasyncio
 import device
 import apps.menu
+import utils.pin_debugger as pin_debugger
 
 async def main():
+    # pin_debugger.start_auto_debug_task()
     await apps.menu.run()
 
 try:
