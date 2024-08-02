@@ -6,11 +6,11 @@ ALL_INDICES = range(30)
 DEFAULT_SELECTION = ALL_INDICES
 
 # Create all pins anyways so as to keep indexing neat
-_pins = [Pin(i, Pin.IN, Pin.PULL_UP) for i in ALL_INDICES]
+_pins = [Pin(i) for i in ALL_INDICES]
 _interval = 1.0
 
 def pressed(i):
-    return not _pins[i].value()
+    return _pins[i].value()
 
 def set_interval(new_interval):
     global _interval
@@ -31,5 +31,7 @@ async def auto_debug_pins():
         await uasyncio.sleep(_interval)
 
 def start_auto_debug_task():
-    uasyncio.create_task(auto_debug_pins())
+    coro = auto_debug_pins()
+    uasyncio.create_task(coro)
+    return coro
 
