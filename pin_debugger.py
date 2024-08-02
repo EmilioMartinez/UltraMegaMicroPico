@@ -9,23 +9,29 @@ DEFAULT_SELECTION = ALL_INDICES
 _pins = [Pin(i) for i in ALL_INDICES]
 _interval = 1.0
 
-def debug_pins(*sel):
-    selected = DEFAULT_SELECTION if not sel else sel[0] if utils.is_iterable(sel[0]) else sel
-    values_iter = (f"{i}: {_pins[i].value()}" for i in selected)
+def value(i):
+    return _pins[i].value()
+
+def set_interval(new_interval):
+    global _interval
+    _interval = new_interval
+
+def debug_pins(*selected):
+    selected = DEFAULT_SELECTION if not selected else selected[0] if utils.is_iterable(selected[0]) else selected
+    values_iter = (f"{i}: {'Off' if value(i) else 'On '}" for i in selected)
     print("Pin values: " + ", ".join(values_iter))
 
-def set_interval(new):
-    global _interval
-    _interval = new
-
-async def debug_pins_auto(*selected):
+async def auto_debug_pins():
+    # maybe revert to array to keep ordered
+    tracked = set()
     while True:
-        debug_pins(*selected)
+        tracked.update(i for i in ALL_INDICES if not value(i))
+        debug_pins(tracked)
         await uasyncio.sleep(_interval)
 
 
 try:
-    uasyncio.run(debug_pins_auto(0, 1, 2, 3, 4))
+    uasyncio.run(auto_debug_pins())
 except KeyboardInterrupt:
     pass
 
