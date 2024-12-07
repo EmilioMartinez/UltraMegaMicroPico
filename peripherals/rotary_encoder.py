@@ -1,4 +1,4 @@
-from peripherals.peripheral import Peripheral
+from . import Peripheral
 from machine import Pin
 import uasyncio
 
