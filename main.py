@@ -1,5 +1,5 @@
-import uasyncio
 import device
+import uasyncio
 import apps
 import utils.pin_debugger as pin_debugger
 
