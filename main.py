@@ -1,6 +1,6 @@
 import uasyncio
 import device
-import apps.menu
+import apps
 import utils.pin_debugger as pin_debugger
 
 
@@ -8,7 +8,7 @@ coroutines = set()
 
 async def main():
     # coroutines.add(pin_debugger.start_auto_debug_task())
-    await apps.menu.run()
+    await apps.loader()
 
 try:
     print("Main loop initiated")

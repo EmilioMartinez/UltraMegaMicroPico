@@ -6,7 +6,6 @@ from peripherals.rotary_encoder import RotaryEncoder
 
 
 def reset():
-    print("Resetting device")
     reset_all()
 
 joystick = Joystick(26, 27, 0)

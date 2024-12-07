@@ -10,7 +10,7 @@ class Peripheral:
         _list.append(self)
     
     def reset(self):
-        print(f"Peripheral reset: {self}")
+        pass
     
     def debug(self):
         print(f"Peripheral debug: {self}")
