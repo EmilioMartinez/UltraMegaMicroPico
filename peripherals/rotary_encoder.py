@@ -65,9 +65,9 @@ class RotaryEncoder(Peripheral):
 
             if diff == 1:
                 self._counter += 1
-            if diff == 3:
+            elif diff == 3:
                 self._counter -= 1
-            if diff == 2:
+            elif diff == 2:
                 if self._strict_counting:
                     print("--- Quadrant was skipped, debugging before raising error:")
                     self.debug()
