@@ -23,7 +23,7 @@ def debug_pins(*selected):
 
 async def _auto_debug_selected_coroutine(*selected):
     while True:
-        debug_pins(selected)
+        debug_pins(*selected)
         await uasyncio.sleep(_interval)
 
 async def _auto_debug_tracked_coroutine():
@@ -36,7 +36,7 @@ async def _auto_debug_tracked_coroutine():
         await uasyncio.sleep(_interval)
 
 def start_auto_debug_task(*selected):
-    coro = _auto_debug_selected_coroutine(selected) if selected else _auto_debug_tracked_coroutine()
+    coro = _auto_debug_selected_coroutine(*selected) if selected else _auto_debug_tracked_coroutine()
     uasyncio.create_task(coro)
     return coro
 
