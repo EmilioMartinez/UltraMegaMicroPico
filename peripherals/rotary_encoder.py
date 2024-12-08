@@ -21,11 +21,11 @@ from micropython import schedule
 # Skipping a quadrant raises an exception by default, but can be set to be flexible by setting strict_counting to false
 
 class RotaryEncoder(Peripheral):
-    def __init__(self, clk_pin, dt_pin, strict_counting=True, clicks_per_turn=None):
+    def __init__(self, clk_pin, dt_pin, clicks_per_turn=None, strict_counting=True):
         self._pin_clk = Pin(clk_pin, Pin.IN, Pin.PULL_UP)
         self._pin_dt  = Pin(dt_pin , Pin.IN, Pin.PULL_UP)
-        self._strict_counting = strict_counting
         self._clicks_per_turn = clicks_per_turn
+        self._strict_counting = strict_counting
 
         # Initial state
         self._quadrant = self._get_quadrant()
