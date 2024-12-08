@@ -34,6 +34,8 @@ class RotaryEncoder(Peripheral):
         self._pin_clk.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=self._handle_interrupt)
         self._pin_dt .irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=self._handle_interrupt)
 
+        self.debug()
+
     def _get_quadrant(self) -> int:
         clk = self._pin_clk.value()
         dt  = self._pin_dt .value()
