@@ -21,7 +21,12 @@ def debug_pins(*selected):
     values_iter = (f"{i}: {'On ' if pressed(i) else 'Off'}" for i in selected)
     print("Pin values: " + ", ".join(values_iter))
 
-async def auto_debug_pins():
+async def _auto_debug_selected_coroutine(*selected):
+    while True:
+        debug_pins(selected)
+        await uasyncio.sleep(_interval)
+
+async def _auto_debug_tracked_coroutine():
     tracked = [False for i in ALL_INDICES]
     while True:
         for i in ALL_INDICES:
@@ -30,8 +35,8 @@ async def auto_debug_pins():
         debug_pins(i for i in ALL_INDICES if tracked[i])
         await uasyncio.sleep(_interval)
 
-def start_auto_debug_task():
-    coro = auto_debug_pins()
+def start_auto_debug_task(*selected):
+    coro = _auto_debug_selected_coroutine(selected) if selected else _auto_debug_tracked_coroutine()
     uasyncio.create_task(coro)
     return coro
 
