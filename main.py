@@ -5,7 +5,13 @@ import apps
 
 coroutines = set()
 
+async def print_wheel_data():
+    while True:
+        print(device.wheel.get_turns())
+        await uasyncio.sleep(1)
+
 async def main():
+    uasyncio.create_task(print_wheel_data())
     await uasyncio.sleep(300000)
     # await apps.loader()
 
