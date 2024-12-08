@@ -13,7 +13,8 @@ class Peripheral:
         pass
     
     def debug(self):
-        print(f"Peripheral debug: {self}")
+        # print(f"Peripheral debug: {self}")
+        pass
 
 def reset_all():
     for p in _list:
