@@ -18,7 +18,7 @@ import uasyncio
 # Skipping a quadrant raises an exception by default, but can be set to be flexible by setting strict_counting to false
 
 class RotaryEncoder(Peripheral):
-    def __init__(self, clk_pin, dt_pin, sw_pin=None, strict_counting=False, clicks_per_turn=None):
+    def __init__(self, clk_pin, dt_pin, sw_pin=None, strict_counting=True, clicks_per_turn=None):
         self._pin_clk = Pin(clk_pin, Pin.IN, Pin.PULL_UP)
         self._pin_dt  = Pin(dt_pin , Pin.IN, Pin.PULL_UP)
         self._pin_sw  = Pin(sw_pin , Pin.IN, Pin.PULL_UP) if sw_pin is not None else None
@@ -70,14 +70,14 @@ class RotaryEncoder(Peripheral):
                 self._counter -= 1
             if diff == 2:
                 if self._strict_counting:
-                    print("Quadrant was skipped, debugging before raising error:")
+                    print("--- Quadrant was skipped, debugging before raising error:")
                     self.debug()
                     raise ValueError("Invalid encoder state, quadrant was skipped")
             
             self._quadrant = new_quadrant
 
             self.debug()
-            await uasyncio.sleep(0.001)
+            await uasyncio.sleep(0)
 
     def reset(self):
         super().reset()
