@@ -11,5 +11,5 @@ def reset():
 joystick = Joystick(26, 27, 0)
 audio = Buzzer(1)
 display = ST7735_Controller(14, 15, 16, 17, 18)
-wheel = RotaryEncoder(19, 20, 20)
+wheel = RotaryEncoder(19, 20, 20, False)
 
