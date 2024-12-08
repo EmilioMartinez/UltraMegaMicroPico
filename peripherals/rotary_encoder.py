@@ -56,7 +56,7 @@ class RotaryEncoder(Peripheral):
             + (f", sw: {self._pin_sw.value()}" if self._pin_sw else "")
             + f", counter: {self.get_counter()}, clicks: {self.get_clicks()}"
             + (f", turns: {self.get_turns()}" if self._clicks_per_turn is not None else "")
-            )
+        )
 
     def _update(self):
         new_quadrant = self._get_quadrant()
