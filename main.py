@@ -7,8 +7,8 @@ import utils.pin_debugger as pin_debugger
 coroutines = set()
 
 async def main():
-    coroutines.add(pin_debugger.start_auto_debug_task(19, 20))
-    await uasyncio.sleep(30)
+    coroutines.add(pin_debugger.start_auto_debug_task())
+    await uasyncio.sleep(300000)
     # await apps.loader()
 
 try:
