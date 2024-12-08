@@ -43,20 +43,19 @@ class RotaryEncoder(Peripheral):
         return self._counter
 
     def get_clicks(self) -> int:
-        return self._counter//4
+        return self._counter // 4
     
     def get_turns(self) -> float:
         if self._clicks_per_turn is None:
-            raise AttributeError("No clicks_per_turn not set")
-
-        return self._counter/(4 * self._clicks_per_turn)
+            raise AttributeError("clicks_per_turn not set")
+        return self._counter / (4 * self._clicks_per_turn)
     
     def debug(self):
         super().debug()
         print(f"quadrant: {self._get_quadrant()}, clk: {self._pin_clk.value()}, dt: {self._pin_dt.value()}"
-            +   (f", sw: {self._pin_sw.value()}" if self._pin_sw else "")
-            +   f", counter: {self.get_counter()}, clicks: {self.get_clicks()}"
-            +   (f", turns: {self.get_turns()}" if self._clicks_per_turn is not None else "")
+            + (f", sw: {self._pin_sw.value()}" if self._pin_sw else "")
+            + f", counter: {self.get_counter()}, clicks: {self.get_clicks()}"
+            + (f", turns: {self.get_turns()}" if self._clicks_per_turn is not None else "")
             )
 
     async def _update_coroutine(self):
