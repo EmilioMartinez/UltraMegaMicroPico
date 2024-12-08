@@ -54,9 +54,9 @@ class RotaryEncoder(Peripheral):
     def debug(self):
         super().debug()
         print(f"quadrant: {self._get_quadrant()}, clk: {self._pin_clk.value()}, dt: {self._pin_dt.value()}"
-            +   f", sw: {self._pin_sw.value()}" if self._pin_sw else ""
+            +   (f", sw: {self._pin_sw.value()}" if self._pin_sw else "")
             +   f", counter: {self.get_counter()}, clicks: {self.get_clicks()}"
-            +   f", turns: {self.get_turns()}" if self._clicks_per_turn is not None else ""
+            +   (f", turns: {self.get_turns()}" if self._clicks_per_turn is not None else "")
             )
 
     async def _update_coroutine(self):
