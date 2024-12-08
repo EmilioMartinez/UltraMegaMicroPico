@@ -58,23 +58,25 @@ class RotaryEncoder(Peripheral):
             + (f", turns: {self.get_turns()}" if self._clicks_per_turn is not None else "")
             )
 
+    def _update(self):
+        new_quadrant = self._get_quadrant()
+        diff = (new_quadrant - self._quadrant) % 4
+
+        if diff == 1:
+            self._counter += 1
+        elif diff == 3:
+            self._counter -= 1
+        elif diff == 2 and self._strict_counting:
+            print("--- Quadrant was skipped, debugging before raising error:")
+            self.debug()
+            raise ValueError("Invalid encoder state, quadrant was skipped")
+        
+        self._quadrant = new_quadrant
+        self.debug()
+
     async def _update_coroutine(self):
         while True:
-            new_quadrant = self._get_quadrant()
-            diff = (new_quadrant - self._quadrant) % 4
-
-            if diff == 1:
-                self._counter += 1
-            elif diff == 3:
-                self._counter -= 1
-            elif diff == 2 and self._strict_counting:
-                print("--- Quadrant was skipped, debugging before raising error:")
-                self.debug()
-                raise ValueError("Invalid encoder state, quadrant was skipped")
-            
-            self._quadrant = new_quadrant
-
-            self.debug()
+            self._update()
             await uasyncio.sleep(0)
 
     def reset(self):
