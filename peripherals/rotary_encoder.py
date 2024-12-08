@@ -18,21 +18,22 @@ from micropython import schedule
 # A turn is made of clicks_per_turn clicks
 # Clicks are discretized, while turns are though as a continuum
 # The phase is simply floor(get_turns)
-# Skipping a quadrant raises an exception by default, but can be set to be flexible by setting strict_counting to false
+# Skipping a quadrant will be logged by default
 
 class RotaryEncoder(Peripheral):
-    def __init__(self, clk_pin, dt_pin, clicks_per_turn=None, strict_counting=True):
+    def __init__(self, clk_pin, dt_pin, clicks_per_turn=None, log_quadrant_skips=True):
         self._pin_clk = Pin(clk_pin, Pin.IN, Pin.PULL_UP)
         self._pin_dt  = Pin(dt_pin , Pin.IN, Pin.PULL_UP)
         self._clicks_per_turn = clicks_per_turn
-        self._strict_counting = strict_counting
+        self._log_quadrant_skips = log_quadrant_skips
 
         # Initial state
         self._quadrant = self._get_quadrant()
         self._counter = 0
+        self._skips = 0
         
-        self._pin_clk.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=self._handle_interrupt)
-        self._pin_dt .irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=self._handle_interrupt)
+        self._pin_clk.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=self._update)
+        self._pin_dt .irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=self._update)
 
         self.debug()
 
@@ -52,29 +53,28 @@ class RotaryEncoder(Peripheral):
             raise AttributeError("clicks_per_turn not set")
         return self._counter / (4 * self._clicks_per_turn)
 
-    def _handle_interrupt(self, pin):
-        schedule(self._update, None)
-
     def _update(self, _):
         new_quadrant = self._get_quadrant()
         diff = (new_quadrant - self._quadrant) % 4
 
-        if diff == 1:
+        if diff == 0:
+            return
+        elif diff == 1:
             self._counter += 1
         elif diff == 3:
             self._counter -= 1
-        elif diff == 2 and self._strict_counting:
-            print("--- Quadrant was skipped, debugging before raising error:")
-            self.debug()
-            raise ValueError("Invalid encoder state, quadrant was skipped")
+        elif diff == 2:
+            self._skips += 1
+            if self._log_quadrant_skips:
+                print("--- Quadrant was skipped, debugging state:")
+                self.debug()
         
         self._quadrant = new_quadrant
-        self.debug()
     
     def debug(self):
         super().debug()
         print(f"quadrant: {self._get_quadrant()}, clk: {self._pin_clk.value()}, dt: {self._pin_dt.value()}"
-            + f", counter: {self.get_counter()}, clicks: {self.get_clicks()}"
+            + f", counter: {self.get_counter()}, clicks: {self.get_clicks()}, skips: {self._skips}"
             + (f", turns: {self.get_turns()}" if self._clicks_per_turn is not None else "")
         )
 
