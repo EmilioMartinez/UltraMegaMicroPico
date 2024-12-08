@@ -1,14 +1,11 @@
 import device
 import uasyncio
 import apps
-import utils.pin_debugger as pin_debugger
 
 
 coroutines = set()
 
 async def main():
-    pin_debugger.set_interval(0.05)
-    coroutines.add(pin_debugger.start_auto_debug_task(19, 20))
     await uasyncio.sleep(300000)
     # await apps.loader()
 
