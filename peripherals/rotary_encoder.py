@@ -67,11 +67,10 @@ class RotaryEncoder(Peripheral):
                 self._counter += 1
             elif diff == 3:
                 self._counter -= 1
-            elif diff == 2:
-                if self._strict_counting:
-                    print("--- Quadrant was skipped, debugging before raising error:")
-                    self.debug()
-                    raise ValueError("Invalid encoder state, quadrant was skipped")
+            elif diff == 2 and self._strict_counting:
+                print("--- Quadrant was skipped, debugging before raising error:")
+                self.debug()
+                raise ValueError("Invalid encoder state, quadrant was skipped")
             
             self._quadrant = new_quadrant
 
