@@ -1,7 +1,10 @@
 from . import Peripheral
 from machine import Pin
-import uasyncio
+from micropython import schedule
 
+
+# This rotary encoder ignores the usual switch button
+# If present, it should be treated as a regular button on an unrelated pin
 
 # Consider CLK and DT as axi of the plane, then we have the four points:
 # (calling them Quadrants is a stretch though)
@@ -18,10 +21,9 @@ import uasyncio
 # Skipping a quadrant raises an exception by default, but can be set to be flexible by setting strict_counting to false
 
 class RotaryEncoder(Peripheral):
-    def __init__(self, clk_pin, dt_pin, sw_pin=None, strict_counting=True, clicks_per_turn=None):
+    def __init__(self, clk_pin, dt_pin, strict_counting=True, clicks_per_turn=None):
         self._pin_clk = Pin(clk_pin, Pin.IN, Pin.PULL_UP)
         self._pin_dt  = Pin(dt_pin , Pin.IN, Pin.PULL_UP)
-        self._pin_sw  = Pin(sw_pin , Pin.IN, Pin.PULL_UP) if sw_pin is not None else None
         self._strict_counting = strict_counting
         self._clicks_per_turn = clicks_per_turn
 
@@ -29,10 +31,8 @@ class RotaryEncoder(Peripheral):
         self._quadrant = self._get_quadrant()
         self._counter = 0
         
-        self.debug()
-
-        self._update_task = uasyncio.create_task(self._update_coroutine())
-        # set up interrupts
+        self._pin_clk.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=self._handle_interrupt)
+        self._pin_dt .irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=self._handle_interrupt)
 
     def _get_quadrant(self) -> int:
         clk = self._pin_clk.value()
@@ -49,16 +49,11 @@ class RotaryEncoder(Peripheral):
         if self._clicks_per_turn is None:
             raise AttributeError("clicks_per_turn not set")
         return self._counter / (4 * self._clicks_per_turn)
-    
-    def debug(self):
-        super().debug()
-        print(f"quadrant: {self._get_quadrant()}, clk: {self._pin_clk.value()}, dt: {self._pin_dt.value()}"
-            + (f", sw: {self._pin_sw.value()}" if self._pin_sw else "")
-            + f", counter: {self.get_counter()}, clicks: {self.get_clicks()}"
-            + (f", turns: {self.get_turns()}" if self._clicks_per_turn is not None else "")
-        )
 
-    def _update(self):
+    def _handle_interrupt(self, pin):
+        schedule(self._update, None)
+
+    def _update(self, _):
         new_quadrant = self._get_quadrant()
         diff = (new_quadrant - self._quadrant) % 4
 
@@ -73,15 +68,16 @@ class RotaryEncoder(Peripheral):
         
         self._quadrant = new_quadrant
         self.debug()
-
-    async def _update_coroutine(self):
-        while True:
-            self._update()
-            await uasyncio.sleep(0)
+    
+    def debug(self):
+        super().debug()
+        print(f"quadrant: {self._get_quadrant()}, clk: {self._pin_clk.value()}, dt: {self._pin_dt.value()}"
+            + f", counter: {self.get_counter()}, clicks: {self.get_clicks()}"
+            + (f", turns: {self.get_turns()}" if self._clicks_per_turn is not None else "")
+        )
 
     def reset(self):
         super().reset()
-        if self._update_task:
-            self._update_task.cancel() # type: ignore
-            self._update_task = None
+        self._pin_clk.irq(None)
+        self._pin_dt .irq(None)
 
