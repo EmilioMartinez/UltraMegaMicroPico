@@ -1,6 +1,5 @@
 from . import Peripheral
 from machine import Pin
-from micropython import schedule
 
 
 # This rotary encoder ignores the usual switch button
@@ -21,7 +20,7 @@ from micropython import schedule
 # Skipping a quadrant will be logged by default
 
 class RotaryEncoder(Peripheral):
-    def __init__(self, clk_pin, dt_pin, clicks_per_turn=None, log_quadrant_skips=True):
+    def __init__(self, clk_pin, dt_pin, clicks_per_turn=None, log_quadrant_skips=False):
         self._pin_clk = Pin(clk_pin, Pin.IN, Pin.PULL_UP)
         self._pin_dt  = Pin(dt_pin , Pin.IN, Pin.PULL_UP)
         self._clicks_per_turn = clicks_per_turn
@@ -31,6 +30,7 @@ class RotaryEncoder(Peripheral):
         self._quadrant = self._get_quadrant()
         self._counter = 0
         self._skips = 0
+        self._ongoing_update = False
         
         self._pin_clk.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=self._update)
         self._pin_dt .irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=self._update)
@@ -54,12 +54,14 @@ class RotaryEncoder(Peripheral):
         return self._counter / (4 * self._clicks_per_turn)
 
     def _update(self, _):
+        if self._ongoing_update:
+            return
+        
+        self._ongoing_update = True
         new_quadrant = self._get_quadrant()
         diff = (new_quadrant - self._quadrant) % 4
-
-        if diff == 0:
-            return
-        elif diff == 1:
+        
+        if diff == 1:
             self._counter += 1
         elif diff == 3:
             self._counter -= 1
@@ -70,6 +72,7 @@ class RotaryEncoder(Peripheral):
                 self.debug()
         
         self._quadrant = new_quadrant
+        self._ongoing_update = False
     
     def debug(self):
         super().debug()
