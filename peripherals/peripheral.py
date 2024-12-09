@@ -16,11 +16,11 @@ class Peripheral:
         # print(f"Peripheral debug: {self}")
         pass
 
-def reset_all():
+def reset_peripherals():
     for p in _list:
         p.reset()
 
-def debug_all():
+def debug_peripherals():
     for p in _list:
         p.debug()
 

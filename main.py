@@ -29,5 +29,5 @@ finally:
         print(f"Canceling: {coro}")
         coro.close()
     print("Main loop terminated")
-    device.reset()
+    device.reset_peripherals()
 
