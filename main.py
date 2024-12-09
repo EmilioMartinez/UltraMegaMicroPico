@@ -7,7 +7,7 @@ coroutines = set()
 
 async def print_wheel_data():
     while True:
-        print(device.wheel.get_counter(), device.wheel._quadrant, device.wheel._skips)
+        print(device.wheel.get_turns(), device.wheel.get_counter(), device.wheel._quadrant, device.wheel._skips)
         await uasyncio.sleep(1)
 
 async def main():
