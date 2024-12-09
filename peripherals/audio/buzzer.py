@@ -1,7 +1,7 @@
+from .. import Peripheral
 import uasyncio
 import math
 from machine import Pin, PWM
-from peripherals.peripheral import Peripheral
 
 
 MAX_DUTY = 32768

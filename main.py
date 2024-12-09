@@ -1,9 +1,19 @@
-import uasyncio
 import device
-import apps.menu
+import uasyncio
+import apps
+
+
+coroutines = set()
+
+async def print_wheel_data():
+    while True:
+        print(device.wheel.get_turns(), device.wheel.get_counter(), device.wheel._quadrant, device.wheel._unresolved_updates)
+        await uasyncio.sleep(1)
 
 async def main():
-    await apps.menu.run()
+    uasyncio.create_task(print_wheel_data())
+    await uasyncio.sleep(300000)
+    # await apps.loader()
 
 try:
     print("Main loop initiated")
@@ -15,6 +25,9 @@ except KeyboardInterrupt:
     main_loop.close()
 finally:
     # Here go termination methods
+    for coro in coroutines:
+        print(f"Canceling: {coro}")
+        coro.close()
     print("Main loop terminated")
     device.reset()
 
