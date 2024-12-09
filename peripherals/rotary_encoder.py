@@ -4,85 +4,73 @@ from machine import Pin
 
 # This rotary encoder ignores the usual switch button
 # If present, it should be treated as a regular button on an unrelated pin
+# The traditionally called CLK and DT pins will be called X and Y.
 
-# Consider CLK and DT as axi of the plane, then we have the four points:
-# (calling them Quadrants is a stretch though)
-# Quadrant | (CLK, DT)
+# We have the four points in the plane:
+# (calling them Quadrants is a manner of speaking)
+# Quadrant | (X, Y)
 #        0 | (0, 0)
 #        1 | (1, 0)
 #        2 | (1, 1)
 #        3 | (0, 1)
-# Quadrant changes are counted.
+# Quadrant changes are counted
 # A click is made of 4 counters
-# A turn is made of clicks_per_turn clicks
+# A turn is made of clicks_per_turn clicks, if set
 # Clicks are discretized, while turns are though as a continuum
-# The phase is simply floor(get_turns)
-# Skipping a quadrant will be logged by default
 
 class RotaryEncoder(Peripheral):
-    def __init__(self, clk_pin, dt_pin, clicks_per_turn=None, log_quadrant_skips=False):
-        self._pin_clk = Pin(clk_pin, Pin.IN, Pin.PULL_UP)
-        self._pin_dt  = Pin(dt_pin , Pin.IN, Pin.PULL_UP)
+    def __init__(self, X_pin, Y_pin, clicks_per_turn=None):
+        self._X_pin = Pin(X_pin, Pin.IN, Pin.PULL_UP)
+        self._Y_pin = Pin(Y_pin, Pin.IN, Pin.PULL_UP)
         self._clicks_per_turn = clicks_per_turn
-        self._log_quadrant_skips = log_quadrant_skips
 
         # Initial state
         self._quadrant = self._get_quadrant()
         self._counter = 0
-        self._skips = 0
-        self._ongoing_update = False
+        self._unresolved_updates = 0
         
-        self._pin_clk.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=self._update)
-        self._pin_dt .irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=self._update)
-
-        self.debug()
+        self._X_pin.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=self._update)
+        self._Y_pin.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=self._update)
 
     def _get_quadrant(self) -> int:
-        clk = self._pin_clk.value()
-        dt  = self._pin_dt .value()
-        return 2 * clk + clk ^ dt
+        x = self._X_pin.value()
+        y = self._Y_pin.value()
+        return 2 * x + x ^ y # X is the second digit, and the first is (X xor Y)
 
     def get_counter(self) -> int:
         return self._counter
 
     def get_clicks(self) -> int:
         return self._counter // 4
-    
+
     def get_turns(self) -> float:
         if self._clicks_per_turn is None:
             raise AttributeError("clicks_per_turn not set")
         return self._counter / (4 * self._clicks_per_turn)
 
     def _update(self, _):
-        if self._ongoing_update:
-            return
-        
-        self._ongoing_update = True
         new_quadrant = self._get_quadrant()
         diff = (new_quadrant - self._quadrant) % 4
-        
-        if diff == 1:
+        self._quadrant = new_quadrant
+
+        if diff == 0:
+            return
+        elif diff == 1:
             self._counter += 1
         elif diff == 3:
             self._counter -= 1
-        elif diff == 2:
-            self._skips += 1
-            if self._log_quadrant_skips:
-                print("--- Quadrant was skipped, debugging state:")
-                self.debug()
-        
-        self._quadrant = new_quadrant
-        self._ongoing_update = False
+        else:
+            self._unresolved_updates += 1
     
     def debug(self):
         super().debug()
-        print(f"quadrant: {self._get_quadrant()}, clk: {self._pin_clk.value()}, dt: {self._pin_dt.value()}"
-            + f", counter: {self.get_counter()}, clicks: {self.get_clicks()}, skips: {self._skips}"
+        print(f"quadrant: {self._get_quadrant()}, X: {self._X_pin.value()}, Y: {self._Y_pin.value()}"
+            + f", counter: {self.get_counter()}, clicks: {self.get_clicks()}, unresolved: {self._unresolved_updates}"
             + (f", turns: {self.get_turns()}" if self._clicks_per_turn is not None else "")
         )
 
     def reset(self):
         super().reset()
-        self._pin_clk.irq(None)
-        self._pin_dt .irq(None)
+        self._X_pin.irq(None)
+        self._Y_pin.irq(None)
 
