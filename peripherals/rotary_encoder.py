@@ -19,7 +19,7 @@ from machine import Pin
 # Clicks are discretized, while turns are though as a continuum
 
 class RotaryEncoder(Peripheral):
-    def __init__(self, X_pin, Y_pin, clicks_per_turn=None):
+    def __init__(self, X_pin, Y_pin, clicks_per_turn):
         self._X_pin = Pin(X_pin, Pin.IN, Pin.PULL_UP)
         self._Y_pin = Pin(Y_pin, Pin.IN, Pin.PULL_UP)
         self._clicks_per_turn = clicks_per_turn
@@ -44,8 +44,6 @@ class RotaryEncoder(Peripheral):
         return self._counter // 4
 
     def get_turns(self) -> float:
-        if self._clicks_per_turn is None:
-            raise AttributeError("clicks_per_turn not set")
         return self._counter / (4 * self._clicks_per_turn)
 
     def _update(self, _):
