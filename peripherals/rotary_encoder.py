@@ -19,9 +19,9 @@ from machine import Pin
 # Clicks are discretized, while turns are though as a continuum
 
 class RotaryEncoder(Peripheral):
-    def __init__(self, X_pin, Y_pin, clicks_per_turn):
-        self._X_pin = Pin(X_pin, Pin.IN, Pin.PULL_UP)
-        self._Y_pin = Pin(Y_pin, Pin.IN, Pin.PULL_UP)
+    def __init__(self, pin_x, pin_y, clicks_per_turn):
+        self._pin_x = Pin(pin_x, Pin.IN, Pin.PULL_UP)
+        self._pin_y = Pin(pin_y, Pin.IN, Pin.PULL_UP)
         self._clicks_per_turn = clicks_per_turn
 
         # Initial state
@@ -29,12 +29,12 @@ class RotaryEncoder(Peripheral):
         self._counter = 0
         self._unresolved_updates = 0
         
-        self._X_pin.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=self._update)
-        self._Y_pin.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=self._update)
+        self._pin_x.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=self._update)
+        self._pin_y.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=self._update)
 
     def _get_quadrant(self) -> int:
-        x = self._X_pin.value()
-        y = self._Y_pin.value()
+        x = self._pin_x.value()
+        y = self._pin_y.value()
         return 2 * x + x ^ y # X is the second digit, and the first is (X xor Y)
 
     def get_counter(self) -> int:
@@ -62,13 +62,13 @@ class RotaryEncoder(Peripheral):
     
     def debug(self):
         super().debug()
-        print(f"quadrant: {self._get_quadrant()}, X: {self._X_pin.value()}, Y: {self._Y_pin.value()}"
+        print(f"quadrant: {self._get_quadrant()}, X: {self._pin_x.value()}, Y: {self._pin_y.value()}"
             + f", counter: {self.get_counter()}, clicks: {self.get_clicks()}, unresolved: {self._unresolved_updates}"
             + (f", turns: {self.get_turns()}" if self._clicks_per_turn is not None else "")
         )
 
     def reset(self):
         super().reset()
-        self._X_pin.irq(None)
-        self._Y_pin.irq(None)
+        self._pin_x.irq(None)
+        self._pin_y.irq(None)
 

@@ -19,8 +19,8 @@ display = {
 }
 
 rotary_encoder = {
-		"X_pin"				: 19
-	,	"Y_pin"				: 20
+		"pin_x"				: 19
+	,	"pin_y"				: 20
 	,	"clicks_per_turn"	: 20
 }
 
