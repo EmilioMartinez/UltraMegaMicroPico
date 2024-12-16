@@ -1,1 +1,6 @@
-poder detectar si el usd está conectado, sobre todo desde el boot.py
+poder detectar si el usb está conectado, sobre todo desde el boot.py
+
+Tal vez para reemplazar el uso de schedule (que parece inestable,
+a veces dice que esta lleno) se puede usar un timer y su callback
+de forma hacky para hacer los schedule desde IRQ
+
